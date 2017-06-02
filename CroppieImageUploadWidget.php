@@ -2,6 +2,7 @@
 
 namespace ereminmdev\yii2\croppieimageupload;
 
+use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
@@ -87,6 +88,15 @@ class CroppieImageUploadWidget extends InputWidget
     public function run()
     {
         echo $this->renderTemplate();
+
+        if ($this->modalSel === null) {
+            $this->modalSel = '#' . $this->options['id'] . '_modal';
+            echo Modal::widget([
+                'options' => [
+                    'id' => $this->options['id'] . '_modal',
+                ],
+            ]);
+        }
 
         $options = ArrayHelper::merge([
             'aspectRatio' => $this->ratio,

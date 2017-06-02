@@ -19,5 +19,6 @@ class CroppieImageUploadAsset extends AssetBundle
 
     public $depends = [
         'ereminmdev\yii2\croppieimageupload\CroppieAsset',
+        'ereminmdev\yii2\croppieimageupload\ExifAsset',
     ];
 }

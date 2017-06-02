@@ -2,15 +2,14 @@
 
 namespace ereminmdev\yii2\croppieimageupload;
 
-use Imagine\Image\Box;
-use Imagine\Image\Point;
 use mongosoft\file\UploadImageBehavior;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
-use yii\imagine\Image;
 use yii\web\UploadedFile;
 
-
+/**
+ * Class CroppieImageUploadBehavior
+ * @package ereminmdev\yii2\croppieimageupload
+ */
 class CroppieImageUploadBehavior extends UploadImageBehavior
 {
     /**

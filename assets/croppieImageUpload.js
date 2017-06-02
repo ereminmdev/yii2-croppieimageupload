@@ -8,13 +8,18 @@
             containerSel: '',
             cropInputSel: '',
             resultImageSel: '',
-            croppieOptions: [],
+            croppieOptions: {},
 
             imageTag: 'img',
             imageAttrs: {
                 class: 'img-responsive'
             },
-            imageCSS: {}
+            imageCSS: {},
+
+            btnSaveText: 'Сохранить',
+            btnCancelText: 'Отмена',
+            btnRotateLeft: '<i class="fa fa-rotate-left"></i>',
+            btnRotateRight: '<i class="fa fa-rotate-right"></i>'
         };
 
         var settings = $.extend(true, {}, defaults, options);
@@ -32,8 +37,11 @@
                     $body = $modal.find('.modal-body');
 
                 var $footer = $('<p>' +
-                    '<button type="button" class="btn btn-primary btn-save" data-dismiss="modal">Сохранить</button>' +
-                    '<button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Отмена</button>' +
+                    '<button type="button" class="btn btn-primary btn-save" data-dismiss="modal">' + settings.btnSaveText + '</button>' +
+                    '<button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">' + settings.btnCancelText + '</button>' +
+                    ' &nbsp; &nbsp; ' +
+                    '<button type="button" class="btn btn-default btn-rotate" data-deg="-90">' + settings.btnRotateLeft + '</button>' +
+                    '<button type="button" class="btn btn-default btn-rotate" data-deg="90">' + settings.btnRotateRight + '</button>' +
                     '</p>');
 
                 $footer.find('.btn-save').on('click', function (e) {
@@ -49,8 +57,14 @@
                     e.preventDefault();
                 });
 
-                $footer.find('.btn-cancel').on('click', function () {
+                $footer.find('.btn-cancel').on('click', function (e) {
                     $input.val('');
+                    e.preventDefault();
+                });
+
+                $footer.find('.btn-rotate').on('click', function (e) {
+                    $cropper.croppie('rotate', parseInt($(this).data('deg')));
+                    e.preventDefault();
                 });
 
                 $body.empty();
@@ -73,13 +87,15 @@
 
                             var croppieOptions = {
                                 showZoomer: false,
+                                enableExif: true,
+                                enableOrientation: true,
                                 viewport: {
                                     width: vw,
                                     height: wh,
                                     type: 'square'
                                 }
                             };
-                            croppieOptions = $.extend(true, {}, croppieOptions, settings.croppieOptions);
+                            croppieOptions = $.extend(true, {}, settings.croppieOptions, croppieOptions);
 
                             $cropper = $image.croppie(croppieOptions);
                             $cropper.croppie('bind', {url: src});
