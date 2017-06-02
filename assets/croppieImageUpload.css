@@ -1,0 +1,9 @@
+.croppie-container .cr-viewport {
+    border: 1px solid #fff;
+}
+
+.croppie-container .cr-slider-wrap {
+    position: relative;
+    top: -35px;
+    z-index: 2;
+}
