@@ -2,6 +2,7 @@
 
 namespace ereminmdev\yii2\croppieimageupload;
 
+use Yii;
 use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -16,23 +17,23 @@ class CroppieImageUploadWidget extends InputWidget
     /**
      * @var string crop ratio
      * format is width:height where width and height are both floats
-     * if empty and has model, will be got from CropImageUploadBehavior
+     * If not set and has model, will be got from CropImageUploadBehavior
      */
-    public $ratio = 1;
+    public $ratio;
     /**
      * @var string bs modal window selector
+     * If not set, will be created Modal::widget().
      */
     public $modalSel;
     /**
      * @var string attribute name storing crop value or crop value itself if no model
-     * if empty and has model, will be got from CropImageUploadBehavior
+     * if not set, will be the same as $attribute
      */
     public $cropField;
     /**
-     * @var string imageU url where uploaded file is stored
-     * if empty and has model, will be got from CropImageUploadBehavior
+     * @var string resulting image selector
      */
-    public $imageUrl;
+    public $resultImageSel = '.img-result';
     /**
      * @var array the options for the Croppie plugin.
      * Please refer to the Croppie documentation page for possible options.
@@ -40,21 +41,25 @@ class CroppieImageUploadWidget extends InputWidget
      */
     public $croppieOptions = [];
     /**
-     * @var array the options for the croppieImageUpload plugin.
+     * @var array the options for the $.fn.croppieImageUpload plugin.
      */
     public $clientOptions = [];
     /**
-     * @var string
+     * @var string to render $parts into html string
      */
-    public $template = "{crop_input}\n{input}\n{image}";
+    public $template = "{crop_input}\n{input}";
     /**
      * @var array different parts of the input. This will be used together with
      * [[template]] to generate the final field HTML code. The keys are the token names in [[template]],
-     * while the values are the corresponding HTML code. Valid tokens include `{input}`, `{crop_input}` and `{image}`.
+     * while the values are the corresponding HTML code. Valid tokens include `{input}` and `{crop_input}`.
      * Note that you normally don't need to access this property directly as
      * it is maintained by various methods of this class.
      */
     public $parts = [];
+    /**
+     * @var string class name added to field block
+     */
+    public $containerClass = 'field-croppie-image-upload';
 
     protected $crop_id;
 
@@ -66,7 +71,7 @@ class CroppieImageUploadWidget extends InputWidget
     {
         parent::init();
 
-        Html::addCssClass($this->field->options, 'field-croppie-image-upload');
+        Html::addCssClass($this->field->options, $this->containerClass);
 
         if ($this->cropField === null) {
             $this->cropField = $this->attribute;
@@ -77,7 +82,6 @@ class CroppieImageUploadWidget extends InputWidget
             $behavior = $model->hasMethod('findImageBehavior') ? $model->findImageBehavior($this->attribute) : null;
             if ($behavior !== null) {
                 $this->ratio = $behavior->ratio;
-                $this->imageUrl = $this->imageUrl === null ? $model->getImageUrl($this->attribute) : $this->imageUrl;
             }
         }
     }
@@ -99,11 +103,15 @@ class CroppieImageUploadWidget extends InputWidget
         }
 
         $options = ArrayHelper::merge([
-            'aspectRatio' => $this->ratio,
+            'aspectRatio' => $this->ratio ? $this->ratio : 1,
             'modalSel' => $this->modalSel,
-            'containerSel' => '.field-croppie-image-upload',
+            'containerSel' => '.' . $this->containerClass,
             'cropInputSel' => '#' . $this->options['id'] . '_crop',
-            'resultImageSel' => '.croppie-image-upload__image',
+            'resultImageSel' => $this->resultImageSel,
+            'btnSaveText' => Yii::t('app', 'Save'),
+            'btnCancelText' => Yii::t('app', 'Cancel'),
+            'btnRotateLeft' => '<i class="fa fa-rotate-left"></i>',
+            'btnRotateRight' => '<i class="fa fa-rotate-right"></i>',
             'croppieOptions' => $this->croppieOptions,
         ], $this->clientOptions);
 
@@ -122,9 +130,6 @@ class CroppieImageUploadWidget extends InputWidget
             }
             if (!isset($this->parts['{crop_input}'])) {
                 $this->parts['{crop_input}'] = $this->renderCropInput();
-            }
-            if (!isset($this->parts['{image}'])) {
-                $this->parts['{image}'] = Html::tag('div', $this->renderImage(), ['class' => 'croppie-image-upload__image']);
             }
             $content = strtr($this->template, $this->parts);
 
@@ -165,18 +170,6 @@ class CroppieImageUploadWidget extends InputWidget
         }
 
         return '';
-    }
-
-    /**
-     * @return string
-     */
-    public function renderImage()
-    {
-        $options = [
-            'class' => 'img-responsive',
-        ];
-
-        return $this->imageUrl ? Html::img($this->imageUrl, $options) : '';
     }
 
     /**

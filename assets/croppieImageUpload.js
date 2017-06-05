@@ -4,10 +4,14 @@
     $.fn.croppieImageUpload = function (options) {
         var defaults = {
             aspectRatio: 1,
-            modalSel: '',
             containerSel: '',
             cropInputSel: '',
-            resultImageSel: '',
+            resultImageSel: null,
+
+            modalSel: '',
+            modalTitle: null,
+            modalFooter: null,
+
             croppieOptions: {},
 
             imageTag: 'img',
@@ -16,10 +20,10 @@
             },
             imageCSS: {},
 
-            btnSaveText: 'Сохранить',
-            btnCancelText: 'Отмена',
-            btnRotateLeft: '<i class="fa fa-rotate-left"></i>',
-            btnRotateRight: '<i class="fa fa-rotate-right"></i>'
+            btnSaveText: 'Save',
+            btnCancelText: 'Cancel',
+            btnRotateLeft: '←',
+            btnRotateRight: '→'
         };
 
         var settings = $.extend(true, {}, defaults, options);
@@ -36,12 +40,14 @@
                 var $image, $cropper,
                     $body = $modal.find('.modal-body');
 
-                var $footer = $('<p>' +
+                $modal.find('.modal-title').html(settings.modalTitle);
+
+                var $footer = settings.modalFooter ? settings.modalFooter : $('<p>' +
                     '<button type="button" class="btn btn-primary btn-save" data-dismiss="modal">' + settings.btnSaveText + '</button>' +
                     '<button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">' + settings.btnCancelText + '</button>' +
                     ' &nbsp; &nbsp; ' +
-                    '<button type="button" class="btn btn-default btn-rotate" data-deg="-90">' + settings.btnRotateLeft + '</button>' +
-                    '<button type="button" class="btn btn-default btn-rotate" data-deg="90">' + settings.btnRotateRight + '</button>' +
+                    (settings.btnRotateLeft ? '<button type="button" class="btn btn-default btn-rotate" data-deg="-90">' + settings.btnRotateLeft + '</button>' : '') +
+                    (settings.btnRotateRight ? '<button type="button" class="btn btn-default btn-rotate" data-deg="90">' + settings.btnRotateRight + '</button>' : '') +
                     '</p>');
 
                 $footer.find('.btn-save').on('click', function (e) {
@@ -51,8 +57,9 @@
                         format: 'jpeg'
                     }).then(function (resp) {
                         $cropInput.val(resp);
-                        $resultImage.empty();
-                        $('<img/>').attr('src', resp).appendTo($resultImage);
+                        if ($resultImage) {
+                            $resultImage.attr('src', resp);
+                        }
                     });
                     e.preventDefault();
                 });
