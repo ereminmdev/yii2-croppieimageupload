@@ -21,6 +21,5 @@ class CroppieImageUploadAsset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\web\JqueryAsset',
         'ereminmdev\yii2\croppieimageupload\CroppieAsset',
-        'ereminmdev\yii2\croppieimageupload\ExifAsset',
     ];
 }

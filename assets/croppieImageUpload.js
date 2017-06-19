@@ -96,7 +96,6 @@
 
                             var croppieOptions = {
                                 showZoomer: false,
-                                enableExif: true,
                                 enableOrientation: true,
                                 viewport: {
                                     width: vw,
