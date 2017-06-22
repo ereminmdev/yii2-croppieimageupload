@@ -3,12 +3,15 @@
 namespace ereminmdev\yii2\croppieimageupload;
 
 use mongosoft\file\UploadImageBehavior;
+use Yii;
 use yii\db\ActiveRecord;
-use yii\web\UploadedFile;
+use yii\helpers\FileHelper;
 
 /**
  * Class CroppieImageUploadBehavior
  * @package ereminmdev\yii2\croppieimageupload
+ *
+ * @property ActiveRecord $owner
  */
 class CroppieImageUploadBehavior extends UploadImageBehavior
 {
@@ -34,7 +37,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
     public $thumbs = [];
 
     protected $crop_value;
-    protected $crop_changed;
+    protected $action;
 
 
     /**
@@ -52,18 +55,22 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
      */
     public function beforeValidate()
     {
-        /** @var ActiveRecord $model */
         $model = $this->owner;
+        if (in_array($model->scenario, $this->scenarios)) {
+            if (empty($this->crop_field)) {
+                $this->crop_value = $model->getAttribute($this->attribute);
+                $changed = !empty($this->crop_value);
+            } else {
+                $this->crop_value = $model->getAttribute($this->crop_field);
+                $changed = $model->isAttributeChanged($this->crop_field);
+            }
 
-        if (empty($this->crop_field)) {
-            $this->crop_value = $model->getAttribute($this->attribute);
-            $this->crop_changed = !empty($this->crop_value);
-        } else {
-            $this->crop_value = $model->getAttribute($this->crop_field);
-            $this->crop_changed = $model->isAttributeChanged($this->crop_field);
+            if ($changed) {
+                $this->getUploadedFile();
+            }
+
+            parent::beforeValidate();
         }
-
-        parent::beforeValidate();
     }
 
     /**
@@ -73,34 +80,13 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
     {
         parent::beforeSave();
 
-        /** @var ActiveRecord $model */
         $model = $this->owner;
-
-        $this->cropped_field = $model->getAttribute($this->attribute) instanceof UploadedFile ? $this->cropped_field : '';
-
-        if ($this->crop_changed && !empty($this->cropped_field)) {
-            $this->delete($this->cropped_field, true);
-
-            $name = $model->getAttribute($this->attribute);
-
-            if (empty($name)) {
-                $model->setAttribute($this->attribute, $model->getOldAttribute($this->attribute));
+        if (in_array($model->scenario, $this->scenarios)) {
+            if ($this->action == 'delete') {
+                $this->delete($this->attribute, true);
+                $this->owner->setAttribute($this->attribute, '');
             }
-
-            $model->setAttribute($this->cropped_field, $this->getCropFileName($model->getAttribute($this->attribute)));
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function afterUpload()
-    {
-        if ($this->crop_changed) {
-            $this->createCrop();
-        }
-
-        parent::afterUpload();
     }
 
     /**
@@ -130,32 +116,6 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
     }
 
     /**
-     * Crop uploaded image
-     */
-    protected function createCrop()
-    {
-        $path = $this->getUploadPath($this->attribute);
-        $save_path = empty($this->cropped_field) ? $path : $this->getUploadPath($this->cropped_field);
-
-        $data = $this->crop_value;
-
-        list($type, $data) = explode(';', $data);
-        list(, $data) = explode(',', $data);
-        $data = base64_decode($data);
-
-        @file_put_contents($save_path, $data);
-    }
-
-    /**
-     * @param string $filename
-     * @return string
-     */
-    protected function getCropFileName($filename)
-    {
-        return uniqid() . '_' . $filename;
-    }
-
-    /**
      * @param string $attribute
      * @return self|null
      */
@@ -172,5 +132,77 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
             }
         }
         return null;
+    }
+
+    public function getUploadedFile()
+    {
+        $value = $this->crop_value;
+
+        if (mb_strpos($value, 'action=') === 0) {
+            $this->action = mb_substr($value, 7);
+        } elseif ((mb_strpos($value, 'data:image') === 0) && mb_strpos($value, 'base64,')) {
+            $this->createFromBase64($value);
+        } elseif (filter_var($value, FILTER_VALIDATE_URL)) {
+            $this->createFromUrl($value);
+        };
+    }
+
+    /**
+     * @param string $temp_name
+     * @param string $temp_path
+     * @return UploadUrlFile
+     */
+    public function createUploadedFile($temp_name, $temp_path)
+    {
+        return new UploadUrlFile([
+            'name' => $temp_name,
+            'tempName' => $temp_path,
+            'type' => FileHelper::getMimeTypeByExtension($temp_path),
+            'size' => filesize($temp_path),
+            'error' => UPLOAD_ERR_OK,
+        ]);
+    }
+
+    /**
+     * @param string $data
+     */
+    protected function createFromBase64($data)
+    {
+        try {
+            list($type, $data) = explode(';', $data);
+            list(, $data) = explode(',', $data);
+            $ext = mb_substr($type, mb_strrpos($type, '/') + 1);
+            $data = base64_decode($data);
+
+            $temp_name = Yii::$app->security->generateRandomString() . '.' . $ext;
+            $temp_path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $temp_name;
+
+            file_put_contents($temp_path, $data);
+
+            $this->owner->setAttribute($this->attribute, $this->createUploadedFile($temp_name, $temp_path));
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
+     * @param string $url
+     */
+    protected function createFromUrl($url)
+    {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) return;
+
+        $url = str_replace(' ', '+', $url);
+        $url = strpos($url, '//') === 0 ? 'http://' . ltrim($url, '/') : $url;
+
+        try {
+            $ext = preg_match('/\.(jpe?g|gif|png){1}.*$/', $url, $match) ? $match[1] : pathinfo($url, PATHINFO_EXTENSION);
+            $temp_name = Yii::$app->security->generateRandomString() . '.' . $ext;
+            $temp_path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $temp_name;
+
+            copy($url, $temp_path);
+
+            $this->owner->setAttribute($this->attribute, $this->createUploadedFile($temp_name, $temp_path));
+        } catch (\Exception $e) {
+        }
     }
 }
