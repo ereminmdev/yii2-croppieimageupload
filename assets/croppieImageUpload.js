@@ -115,6 +115,8 @@
                 var file = this.files[0];
                 var reader = new FileReader();
 
+                if (!file.type.match('image.*')) return;
+
                 reader.onloadend = function () {
                     changeImage(reader.result);
                 };

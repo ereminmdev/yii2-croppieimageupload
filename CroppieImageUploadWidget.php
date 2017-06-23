@@ -84,6 +84,13 @@ class CroppieImageUploadWidget extends InputWidget
                 $this->ratio = $behavior->ratio;
             }
         }
+
+        $form = $this->field->form;
+        if (!isset($form->options['enctype'])) {
+            $form->options['enctype'] = 'multipart/form-data';
+        }
+
+        $this->options['accept'] = 'image/*';
     }
 
     /**
