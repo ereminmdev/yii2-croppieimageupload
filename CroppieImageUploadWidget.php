@@ -79,7 +79,7 @@ class CroppieImageUploadWidget extends InputWidget
 
         if ($this->hasModel()) {
             $model = $this->model;
-            $behavior = $model->hasMethod('findImageBehavior') ? $model->findImageBehavior($this->attribute) : null;
+            $behavior = $model->hasMethod('findCroppieBehavior') ? $model->findCroppieBehavior($this->attribute) : null;
             if ($behavior !== null) {
                 $this->ratio = $behavior->ratio;
             }

@@ -99,7 +99,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
     {
         $thumb = in_array($thumb, array_keys($this->thumbs)) ? $thumb : false;
 
-        $behavior = $this->findImageBehavior($attribute);
+        $behavior = $this->findCroppieBehavior($attribute);
         if ($behavior !== null) {
             if ($thumb !== false) {
                 return $behavior->getThumbUploadUrl($attribute, $thumb);
@@ -119,7 +119,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
      * @param string $attribute
      * @return self|null
      */
-    public function findImageBehavior($attribute)
+    public function findCroppieBehavior($attribute)
     {
         if ($this->attribute == $attribute) {
             return $this;
