@@ -58,7 +58,7 @@
             return true;
         },
         onCropSave: function (resp, $cropInput, $resultImage) {
-            $cropInput.val(resp);
+            $cropInput.val(resp).trigger('change');
             if ($resultImage) {
                 $resultImage.attr('src', resp);
             }
