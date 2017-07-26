@@ -39,7 +39,7 @@ class CroppieImageUploadWidget extends InputWidget
      * Please refer to the Croppie documentation page for possible options.
      * @see https://foliotek.github.io/Croppie/#documentation
      */
-    public $croppieOptions = ['enforceBoundary' => false];
+    public $croppieOptions = [];
     /**
      * @var array the options for the $.fn.croppieImageUpload plugin.
      */
