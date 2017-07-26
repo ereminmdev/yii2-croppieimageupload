@@ -136,7 +136,7 @@
                             type: 'square'
                         }
                     };
-                    croppieOptions = $.extend(true, {}, settings.croppieOptions, croppieOptions);
+                    croppieOptions = $.extend(true, {}, croppieOptions, settings.croppieOptions);
 
                     $cropper = $image.croppie(croppieOptions);
                     $cropper.croppie('bind', {url: imageSrc});
