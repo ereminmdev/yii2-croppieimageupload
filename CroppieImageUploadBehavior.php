@@ -35,6 +35,12 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
      * - `quality`
      */
     public $thumbs = [];
+    /**
+     * @var array the options for the Croppie plugin.
+     * Please refer to the Croppie documentation page for possible options.
+     * @see https://foliotek.github.io/Croppie/#documentation
+     */
+    public $croppieOptions = [];
 
     protected $crop_value;
     protected $action;

@@ -39,7 +39,7 @@ class CroppieImageUploadWidget extends InputWidget
      * Please refer to the Croppie documentation page for possible options.
      * @see https://foliotek.github.io/Croppie/#documentation
      */
-    public $croppieOptions = [];
+    public $croppieOptions = ['enforceBoundary' => false];
     /**
      * @var array the options for the $.fn.croppieImageUpload plugin.
      */
@@ -82,6 +82,7 @@ class CroppieImageUploadWidget extends InputWidget
             $behavior = $model->hasMethod('findCroppieBehavior') ? $model->findCroppieBehavior($this->attribute) : null;
             if ($behavior !== null) {
                 $this->ratio = $behavior->ratio;
+                $this->croppieOptions = ArrayHelper::merge($this->croppieOptions, $behavior->croppieOptions);
             }
         }
 
