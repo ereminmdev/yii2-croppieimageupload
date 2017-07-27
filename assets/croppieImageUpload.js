@@ -2,7 +2,7 @@
     'use strict';
 
     $.fn.croppieImageUpload = function (options) {
-        var settings = $.extend({}, $.fn.croppieImageUpload.defaults, options);
+        var settings = $.extend(true, {}, $.fn.croppieImageUpload.defaults, options);
 
         return this.each(function () {
             var $input = $(this);
@@ -40,6 +40,13 @@
         modalFooter: null,
 
         croppieOptions: {},
+
+        croppieResultOpts: {
+            type: 'base64',
+            size: 'viewport',
+            format: 'jpeg',
+            backgroundColor: 'white'
+        },
 
         watchOnChange: true,
 
@@ -89,11 +96,7 @@
             '</div>');
 
         $footer.find('.btn-save').on('click', function (e) {
-            $cropper.croppie('result', {
-                type: 'base64',
-                size: 'viewport',
-                format: 'jpeg'
-            }).then(function (resp) {
+            $cropper.croppie('result', settings.croppieResultOpts).then(function (resp) {
                 settings.onCropSave.call($input, resp, $cropInput, $resultImage);
             });
             e.preventDefault();

@@ -6,6 +6,7 @@ use Yii;
 use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\widgets\InputWidget;
 
 /**
@@ -40,6 +41,10 @@ class CroppieImageUploadWidget extends InputWidget
      * @see https://foliotek.github.io/Croppie/#documentation
      */
     public $croppieOptions = [];
+    /**
+     * @var array of options for croppie result method
+     */
+    public $croppieResultOpts = [];
     /**
      * @var array the options for the $.fn.croppieImageUpload plugin.
      */
@@ -83,6 +88,7 @@ class CroppieImageUploadWidget extends InputWidget
             if ($behavior !== null) {
                 $this->ratio = $behavior->ratio;
                 $this->croppieOptions = ArrayHelper::merge($this->croppieOptions, $behavior->croppieOptions);
+                $this->croppieResultOpts = ArrayHelper::merge($this->croppieResultOpts, $behavior->croppieResultOpts);
             }
         }
 
@@ -121,6 +127,7 @@ class CroppieImageUploadWidget extends InputWidget
             'btnRotateLeft' => '<i class="fa fa-rotate-left"></i>',
             'btnRotateRight' => '<i class="fa fa-rotate-right"></i>',
             'croppieOptions' => $this->croppieOptions,
+            'croppieResultOpts' => $this->croppieResultOpts,
         ], $this->clientOptions);
 
         $this->registerPlugin($options);
@@ -189,6 +196,6 @@ class CroppieImageUploadWidget extends InputWidget
 
         CroppieImageUploadAsset::register($view);
 
-        $view->registerJs('jQuery("#' . $this->options['id'] . '").croppieImageUpload(' . json_encode($options) . ');');
+        $view->registerJs('jQuery("#' . $this->options['id'] . '").croppieImageUpload(' . Json::encode($options, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT) . ');');
     }
 }

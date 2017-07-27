@@ -41,6 +41,10 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
      * @see https://foliotek.github.io/Croppie/#documentation
      */
     public $croppieOptions = [];
+    /**
+     * @var array of options for croppie result method
+     */
+    public $croppieResultOpts = [];
 
     protected $crop_value;
     protected $action;
