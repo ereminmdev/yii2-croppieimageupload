@@ -16,6 +16,10 @@ use yii\helpers\FileHelper;
 class CroppieImageUploadBehavior extends UploadImageBehavior
 {
     /**
+     * @var bool use croppie
+     */
+    public $crop = true;
+    /**
      * @var string crop ratio (needed width / needed height)
      */
     public $ratio = 1;

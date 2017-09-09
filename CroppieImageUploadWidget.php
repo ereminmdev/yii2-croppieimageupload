@@ -16,6 +16,10 @@ use yii\widgets\InputWidget;
 class CroppieImageUploadWidget extends InputWidget
 {
     /**
+     * @var bool use croppie
+     */
+    public $crop = true;
+    /**
      * @var string crop ratio
      * format is width:height where width and height are both floats
      * If not set and has model, will be got from CropImageUploadBehavior
@@ -86,6 +90,7 @@ class CroppieImageUploadWidget extends InputWidget
             $model = $this->model;
             $behavior = $model->hasMethod('findCroppieBehavior') ? $model->findCroppieBehavior($this->attribute) : null;
             if ($behavior !== null) {
+                $this->crop = $behavior->crop;
                 $this->ratio = $behavior->ratio;
                 $this->croppieOptions = ArrayHelper::merge($this->croppieOptions, $behavior->croppieOptions);
                 $this->croppieResultOpts = ArrayHelper::merge($this->croppieResultOpts, $behavior->croppieResultOpts);
@@ -194,8 +199,9 @@ class CroppieImageUploadWidget extends InputWidget
     {
         $view = $this->getView();
 
-        CroppieImageUploadAsset::register($view);
-
-        $view->registerJs('jQuery("#' . $this->options['id'] . '").croppieImageUpload(' . Json::encode($options, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT) . ');');
+        if ($this->crop) {
+            CroppieImageUploadAsset::register($view);
+            $view->registerJs('jQuery("#' . $this->options['id'] . '").croppieImageUpload(' . Json::encode($options, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT) . ');');
+        }
     }
 }
