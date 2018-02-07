@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
 
 class CroppieAsset extends AssetBundle
 {
-    public $sourcePath = '@vendor/npm/croppie';
+    public $sourcePath = '@npm/croppie';
 
     public $js = [
         YII_DEBUG ? 'croppie.js' : 'croppie.min.js',
