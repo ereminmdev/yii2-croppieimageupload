@@ -18,7 +18,7 @@ public function behaviors()
     return [
         ...
         'avatar' => [
-            'class' => CroppieImageUploadBehavior::className(),
+            'class' => CroppieImageUploadBehavior::class,
             'attribute' => 'avatar',
             'scenarios' => ['create', 'update'],
             'placeholder' => '@app/modules/user/assets/images/avatar.jpg',
@@ -38,7 +38,7 @@ View file:
 
 ```php
 <?php $form = ActiveForm::begin(); ?>
-    <?= $form->field($model, 'photo')->widget(CroppieImageUploadWidget::className()) ?>
+    <?= $form->field($model, 'photo')->widget(CroppieImageUploadWidget::class) ?>
     <div class="form-group">
         <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
     </div>
