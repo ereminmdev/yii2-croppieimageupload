@@ -15,7 +15,7 @@
   "require": {
     "php": ">=5.4.0",
     "yiisoft/yii2": "~2.0.1",
-    "mongosoft/yii2-upload-behavior": "^0.1",
+    "mohorev/yii2-upload-behavior": "^0.2",
     "npm-asset/croppie": "^2.4",
     "npm-asset/exif-js": "^2.2"
   },
