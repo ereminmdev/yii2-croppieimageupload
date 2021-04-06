@@ -55,7 +55,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -65,7 +65,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function beforeValidate()
     {
@@ -88,7 +88,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function beforeSave()
     {
