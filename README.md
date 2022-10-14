@@ -2,7 +2,7 @@
 
 Crop image upload for Yii framework.
 
-This widget depend on:
+This widget depends on:
 - https://github.com/mohorev/yii2-upload-behavior
 - https://foliotek.github.io/Croppie/
 
