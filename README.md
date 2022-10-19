@@ -8,7 +8,7 @@ This widget depends on:
 
 ## Install
 
-``composer require ereminmdev/yii-croppieimageupload``
+``composer require --prefer-dist ereminmdev/yii-croppieimageupload``
 
 ## Use
 

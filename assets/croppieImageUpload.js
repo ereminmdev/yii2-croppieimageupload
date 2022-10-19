@@ -87,11 +87,11 @@
 
         var $footer = settings.modalFooter ? settings.modalFooter : $('<div class="croppie-modal-footer">' +
             '<button type="button" class="btn btn-primary btn-save" data-dismiss="modal">' + settings.btnSaveText + '</button>' +
-            '&nbsp; ' +
+            '  ' +
             '<button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">' + settings.btnCancelText + '</button>' +
-            '&nbsp; &nbsp; &nbsp; &nbsp; ' +
+            '        ' +
             (settings.btnRotateLeft ? '<button type="button" class="btn btn-default btn-rotate" data-deg="-90">' + settings.btnRotateLeft + '</button>' : '') +
-            '&nbsp; ' +
+            '  ' +
             (settings.btnRotateRight ? '<button type="button" class="btn btn-default btn-rotate" data-deg="90">' + settings.btnRotateRight + '</button>' : '') +
             '</div>');
 
