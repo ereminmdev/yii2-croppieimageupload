@@ -195,7 +195,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
 
             $this->owner->setAttribute($this->attribute, $this->createUploadedFile($temp_name, $temp_path));
         } catch (\Exception $e) {
-            Yii::error($e->getMessage());
+            Yii::error($e, __METHOD__);
         }
     }
 
@@ -218,7 +218,7 @@ class CroppieImageUploadBehavior extends UploadImageBehavior
 
             $this->owner->setAttribute($this->attribute, $this->createUploadedFile($temp_name, $temp_path));
         } catch (\Exception $e) {
-            Yii::error($e->getMessage());
+            Yii::error($e, __METHOD__);
         }
     }
 }
