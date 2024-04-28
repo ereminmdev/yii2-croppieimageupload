@@ -122,7 +122,7 @@ class CroppieImageUploadWidget extends InputWidget
         }
 
         $options = ArrayHelper::merge([
-            'aspectRatio' => $this->ratio ? $this->ratio : 1,
+            'aspectRatio' => $this->ratio ?: 1,
             'modalSel' => $this->modalSel,
             'containerSel' => '.' . $this->containerClass,
             'cropInputSel' => '#' . $this->options['id'] . '_crop',
